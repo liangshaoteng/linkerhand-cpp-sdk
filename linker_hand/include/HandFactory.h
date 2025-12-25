@@ -43,6 +43,9 @@ public:
 
         if (canChannel == "can0" || canChannel == "can1" || canChannel == "ethercat") {
             switch (type) {
+                case LINKER_HAND::O6:
+                    return std::make_unique<LinkerHandL6::LinkerHand>(handId, canChannel, baudrate);
+                    break;
                 case LINKER_HAND::L6:
                     return std::make_unique<LinkerHandL6::LinkerHand>(handId, canChannel, baudrate);
                     break;

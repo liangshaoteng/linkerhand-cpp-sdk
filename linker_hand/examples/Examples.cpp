@@ -426,7 +426,7 @@ int main()
     {
         std::cout << GREEN << "\nRun Choose LinkerHand:\n" << RESET;
         printColorLine1();
-        std::cout << BLUE << "[1]: L6\n" << RESET;
+        std::cout << BLUE << "[1]: L6/O6\n" << RESET;
         printColorLine1();
         std::cout << BLUE << "[2]: L7\n" << RESET;
         printColorLine1();

@@ -2,6 +2,7 @@
 #define COMMON_H
 
 enum LINKER_HAND {
+    O6,
     L6,
     L7,
     L10,
