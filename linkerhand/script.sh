@@ -154,6 +154,7 @@ function install_sdk(){
 function uninstall_sdk(){
     sudo rm -rf $INSTALL_PREFIX/lib/linkerhand-cpp-sdk
     sudo rm -rf $INSTALL_PREFIX/include/linkerhand-cpp-sdk
+    sudo rm -rf $INSTALL_PREFIX/lib/liblinkerhand_cpp_sdk.so*
 }
 
 function run_example(){
