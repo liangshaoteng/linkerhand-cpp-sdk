@@ -16,6 +16,15 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+    set(LIB_SUBDIR "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+    set(LIB_SUBDIR "aarch64")
+else()
+    message(WARNING "Unknown architecture, defaulting to x86_64")
+    set(LIB_SUBDIR "x86_64")
+endif()
+
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -29,25 +38,48 @@ set(COMMON_INCLUDE_DIRS
   include
 )
 
-# Include directories
-include_directories(${COMMON_INCLUDE_DIRS})
-
-# Find linker_hand_lib
+#-----------------------------------------------------------------------------
+# LINKER_HAND_CPP_SDK
+#-----------------------------------------------------------------------------
 find_library(LINKER_HAND_LIB
-  NAMES linker_hand_lib
-  PATHS /usr/local/linker_hand_cpp_sdk/lib
-  NO_DEFAULT_PATH
+    NAMES linkerhand_cpp_sdk linkerhand_cpp
+    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/lib/${LIB_SUBDIR}
+        /usr/local/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+        /usr/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+        ${CMAKE_INSTALL_PREFIX}/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+    NO_DEFAULT_PATH
 )
 
-# Find api_cpp
-find_library(API_CPP_LIB
-  NAMES api_cpp
-  PATHS /usr/local/linker_hand_cpp_sdk/third_party/Robotic_Arm/lib
-  NO_DEFAULT_PATH
+set(LINKER_HAND_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    /usr/local/include/linkerhand-cpp-sdk
+    /usr/include/linkerhand-cpp-sdk
+    ${CMAKE_INSTALL_PREFIX}/include/linkerhand-cpp-sdk
 )
+
+if(NOT LINKER_HAND_LIB)
+    message(FATAL_ERROR "linkerhand_cpp_sdk library not found!")
+endif()
+
+if(NOT LINKER_HAND_INCLUDE_DIR)
+    message(FATAL_ERROR "LinkerHand headers not found!")
+endif()
+
+message(STATUS "Found linkerhand_cpp_sdk library: ${LINKER_HAND_LIB}")
+message(STATUS "Found LinkerHand headers: ${LINKER_HAND_INCLUDE_DIR}")
+
+#-----------------------------------------------------------------------------
+# INCLUDE_DIRECTORIES
+#-----------------------------------------------------------------------------
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${LINKER_HAND_INCLUDE_DIR}
+)
+
+# ----------------------------------------------------------------------
 
 # Define common link libraries
-set(COMMON_LIBS ${LINKER_HAND_LIB} ${API_CPP_LIB} pthread)
+set(COMMON_LIBS ${LINKER_HAND_LIB} pthread)
 
 # Define source files
 set(SOURCE_FILES

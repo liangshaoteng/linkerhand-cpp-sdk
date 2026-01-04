@@ -15,36 +15,61 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+    set(LIB_SUBDIR "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+    set(LIB_SUBDIR "aarch64")
+else()
+    message(WARNING "Unknown architecture, defaulting to x86_64")
+    set(LIB_SUBDIR "x86_64")
+endif()
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
-# ----------------------------------------------------------------------
-# 查找 liblinker_hand_lib.a 库
+#-----------------------------------------------------------------------------
+# LINKER_HAND_CPP_SDK
+#-----------------------------------------------------------------------------
 find_library(LINKER_HAND_LIB
-    NAMES linker_hand_lib
-    PATHS /usr/local/linker_hand_cpp_sdk/lib
+    NAMES linkerhand_cpp_sdk linkerhand_cpp
+    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/lib/${LIB_SUBDIR}
+        /usr/local/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+        /usr/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+        ${CMAKE_INSTALL_PREFIX}/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
     NO_DEFAULT_PATH
 )
-# 包含目录
+
+set(LINKER_HAND_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    /usr/local/include/linkerhand-cpp-sdk
+    /usr/include/linkerhand-cpp-sdk
+    ${CMAKE_INSTALL_PREFIX}/include/linkerhand-cpp-sdk
+)
+
+if(NOT LINKER_HAND_LIB)
+    message(FATAL_ERROR "linkerhand_cpp_sdk library not found!")
+endif()
+
+if(NOT LINKER_HAND_INCLUDE_DIR)
+    message(FATAL_ERROR "LinkerHand headers not found!")
+endif()
+
+message(STATUS "Found linkerhand_cpp_sdk library: ${LINKER_HAND_LIB}")
+message(STATUS "Found LinkerHand headers: ${LINKER_HAND_INCLUDE_DIR}")
+
+#-----------------------------------------------------------------------------
+# INCLUDE_DIRECTORIES
+#-----------------------------------------------------------------------------
 include_directories(
-  /usr/local/linker_hand_cpp_sdk/include
-  include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${LINKER_HAND_INCLUDE_DIR}
 )
+
 # ----------------------------------------------------------------------
-# 查找 RMAN_API_LIB 库
-find_library(RMAN_API_LIB
-    NAMES api_cpp
-    PATHS /usr/local/linker_hand_cpp_sdk/third_party/Robotic_Arm/lib
-    NO_DEFAULT_PATH
-)
-# 包含目录
-include_directories(
-  /usr/local/linker_hand_cpp_sdk/third_party/Robotic_Arm/include
-)
-# ----------------------------------------------------------------------
+
 add_executable(linker_hand_node src/linker_hand_node.cpp)
 target_include_directories(linker_hand_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -52,7 +77,7 @@ target_include_directories(linker_hand_node PUBLIC
 ament_target_dependencies(linker_hand_node rclcpp std_msgs sensor_msgs)
 
 # 链接库
-target_link_libraries(linker_hand_node ${LINKER_HAND_LIB} ${RMAN_API_LIB} pthread)
+target_link_libraries(linker_hand_node ${LINKER_HAND_LIB} pthread)
 
 
 install(TARGETS linker_hand_node

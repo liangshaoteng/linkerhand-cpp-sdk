@@ -250,12 +250,16 @@ public:
 
         const auto& touch = hand->getForce();
 
-        for (const auto& vec : touch) {
-            for (uint8_t byte : vec) {
-                message.data.push_back(static_cast<float>(byte));
+        // 第一层：遍历手指
+        for (const auto& finger_data : touch) {
+            // 第二层：遍历手指上的传感器阵列
+            for (const auto& sensor_row : finger_data) {
+                // 第三层：遍历每个传感器的数据
+                for (auto byte : sensor_row) {
+                    message.data.push_back(static_cast<float>(byte));
+                }
             }
         }
-        publisher.publish(message);
     }
 
     // General function: public joint state

@@ -6,37 +6,6 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发，用�
 
 ## 安装
 
-### windows
-
-系统：windows 11 64 位系统
-
-环境：cmake 4.0.3、MinGW x86_64 15.1.0
-- 下载 SDK
-
-```bash
-git clone https://github.com/linkerbotai/linker_hand_cpp_sdk.git
-```
-
-- 编译：
-
-    - 1、拷贝 linker_hand_cpp_sdk/linker_hand/third_party/PCAN_Basic/x64/PCANBasic.dll 到 C:\Windows\System32 目录下
-
-    - 2、拷贝 linker_hand_cpp_sdk/linker_hand/third_party/Robotic_Arm/windows/win_mingw64_c++_v1.1.0/libapi_cpp.dll 到 C:\Windows\System32 目录下
-
-```bash
-cd linker_hand_cpp_sdk/linker_hand
-mkdir build
-cd build
-cmake -G "MinGW Makefiles" ..
-cmake --build .
-```
-
-- 运行示例
-
-```bash
-./linker_hand_example.exe
-```
-
 ### ubuntu
 
 - 下载 SDK
@@ -50,15 +19,15 @@ git clone https://github.com/linkerbotai/linker_hand_cpp_sdk.git
 cd linker_hand_cpp_sdk/linker_hand
 ./script.sh
 ```
-![alt text](linker_hand/img/script.png)
+![alt text](linkerhand/img/script.png)
 - 运行示例
 
 ```bash
 cd build
-./linker_hand_example
+./toolset_example
 ```
 
-![alt text](linker_hand/img/example.png) 
+![alt text](linkerhand/img/example.png) 
 
 ## 快速开始
 
@@ -97,31 +66,59 @@ int main() {
 cmake_minimum_required(VERSION 3.5)
 project(MyProject)
 
-# 查找 LINKER_HAND_LIB 库
-find_library(LINKER_HAND_LIB
-    NAMES linkerhand_cpp
-    PATHS /usr/local/lib/linkerhand-cpp-sdk/lib/
-    NO_DEFAULT_PATH
-)
-# 设置头文件路径
-set(LINKER_HAND_INCLUDE_DIR /usr/local/include/linkerhand-cpp-sdk/include/)
-
-# 检查是否找到
-if(NOT LINKER_HAND_LIB)
-    message(FATAL_ERROR "linkerhand_cpp library not found!")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+    set(LIB_SUBDIR "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+    set(LIB_SUBDIR "aarch64")
+else()
+    message(WARNING "Unknown architecture, defaulting to x86_64")
+    set(LIB_SUBDIR "x86_64")
 endif()
 
-# 包含目录
-include_directories(
-	include
-	${LINKER_HAND_INCLUDE_DIR}
+#-----------------------------------------------------------------------------
+# LINKER_HAND_CPP_SDK
+#-----------------------------------------------------------------------------
+find_library(LINKER_HAND_LIB
+    NAMES linkerhand_cpp_sdk linkerhand_cpp
+    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/lib/${LIB_SUBDIR}
+        /usr/local/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+        /usr/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+        ${CMAKE_INSTALL_PREFIX}/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
+    NO_DEFAULT_PATH
 )
 
-# 添加可执行文件
-add_executable(my_project main.cpp)
+set(LINKER_HAND_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    /usr/local/include/linkerhand-cpp-sdk
+    /usr/include/linkerhand-cpp-sdk
+    ${CMAKE_INSTALL_PREFIX}/include/linkerhand-cpp-sdk
+)
 
-# 链接库
+if(NOT LINKER_HAND_LIB)
+    message(FATAL_ERROR "linkerhand_cpp_sdk library not found!")
+endif()
+
+if(NOT LINKER_HAND_INCLUDE_DIR)
+    message(FATAL_ERROR "LinkerHand headers not found!")
+endif()
+
+message(STATUS "Found linkerhand_cpp_sdk library: ${LINKER_HAND_LIB}")
+message(STATUS "Found LinkerHand headers: ${LINKER_HAND_INCLUDE_DIR}")
+
+#-----------------------------------------------------------------------------
+# INCLUDE_DIRECTORIES
+#-----------------------------------------------------------------------------
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${LINKER_HAND_INCLUDE_DIR}
+)
+
+#-----------------------------------------------------------------------------
+# EXECUTABLE
+#-----------------------------------------------------------------------------
+add_executable(my_project main.cpp)
 target_link_libraries(my_project ${LINKER_HAND_LIB} pthread)
+
   ```
 
 - 文件结构
@@ -162,10 +159,10 @@ L25: ["大拇指根部", "食指根部", "中指根部","无名指根部","小�
 
 ## 示例
 
-| 序号 | 文件名称  | 描述                                           |
-| :--- | :-------- | :--------------------------------------------- |
-| 1    | Examples  | 示例集合（支持 L7、L10、L20、L21、L25 灵巧手） |
-| 2    | ModbusRTU | 仅支持 L10 型号灵巧手（四代睿尔曼臂）          |
+| 序号 | 文件名称              | 描述                                                  |
+| :--- | :-------------------- | :---------------------------------------------------- |
+| 1    | examples              | 示例集合（支持 O6/L6、L7、L10、L20、L21、L25 灵巧手） |
+| 2    | action_group_show_l10 | 灵巧手 L10 手指舞                                     |
 
 ## API 文档
 

@@ -2,6 +2,13 @@
 
 VERSION="1.1.6"
 
+# 确定系统架构
+ARCH=$(uname -m)
+
+# 设置安装目录
+INSTALL_PREFIX="/usr/local"
+
+
 function LoadedColor_information()
 {
   # 文本颜色
@@ -98,15 +105,59 @@ function build_sdk(){
 }
 
 function install_sdk(){
-    cd build; sudo make install
+    # 安装脚本
+    set -e
+
+    echo "检测到系统架构: $ARCH"
+    echo "正在安装 linkerhand-cpp-sdk 到系统..."
+    
+    # 安装头文件
+    echo "安装头文件到 $INSTALL_PREFIX/include/linkerhand-cpp-sdk..."
+    sudo mkdir -p $INSTALL_PREFIX/include/linkerhand-cpp-sdk
+    sudo cp -r include/* $INSTALL_PREFIX/include/linkerhand-cpp-sdk/
+
+    # 安装库文件
+    if [ "$ARCH" = "x86_64" ]; then
+        echo "安装 x86_64 库文件..."
+        sudo mkdir -p $INSTALL_PREFIX/lib/linkerhand-cpp-sdk/x86_64
+        sudo cp -r lib/x86_64/* $INSTALL_PREFIX/lib/linkerhand-cpp-sdk/x86_64/
+        # 创建符号链接到标准库目录
+        for lib_file in lib/x86_64/*.so*; do
+            lib_name=$(basename $lib_file)
+            sudo ln -sf $INSTALL_PREFIX/lib/linkerhand-cpp-sdk/x86_64/$lib_name $INSTALL_PREFIX/lib/
+        done
+    elif [ "$ARCH" = "aarch64" ]; then
+        echo "安装 aarch64 库文件..."
+        sudo mkdir -p $INSTALL_PREFIX/lib/linkerhand-cpp-sdk/aarch64
+        sudo cp -r lib/aarch64/* $INSTALL_PREFIX/lib/linkerhand-cpp-sdk/aarch64/
+        # 创建符号链接到标准库目录
+        for lib_file in lib/aarch64/*.so*; do
+            lib_name=$(basename $lib_file)
+            sudo ln -sf $INSTALL_PREFIX/lib/linkerhand-cpp-sdk/aarch64/$lib_name $INSTALL_PREFIX/lib/
+        done
+    else
+        echo "不支持的架构: $ARCH"
+        exit 1
+    fi
+
+    # 更新动态链接库缓存
+    echo "更新动态链接库缓存..."
+    sudo ldconfig
+
+    echo "安装完成！"
+    echo ""
+    echo "使用示例："
+    echo "  编译: g++ -o test test.cpp -llinkerhand_cpp_sdk -I/usr/local/include/linkerhand-cpp-sdk"
+    echo "  运行: LD_LIBRARY_PATH=/usr/local/lib ./test"
 }
 
 function uninstall_sdk(){
-    sudo rm -rf /usr/local/linker_hand_cpp_sdk/
+    sudo rm -rf $INSTALL_PREFIX/lib/linkerhand-cpp-sdk
+    sudo rm -rf $INSTALL_PREFIX/include/linkerhand-cpp-sdk
 }
 
 function run_example(){
-    cd build; ./linker_hand_example
+    cd build; ./toolset_example
 }
 
 #------------------------------------------------ Select Menu ------------------------------------------

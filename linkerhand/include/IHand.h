@@ -32,6 +32,7 @@ public:
     // 设置关节速度
     virtual void setSpeed(const std::vector<uint8_t> &speed)
     {
+        (void) speed;
         printUnsupportedFeature("setSpeed");
     }
     // 获取当前关节位置

@@ -417,7 +417,7 @@ vector<uint8_t> showLeft() {
 int main() {
 
     // 调用API接口
-    LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
+    LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::LEFT);
     hand.setSpeed({100, 100, 100, 100, 100});
     hand.setTorque({200, 200, 200, 200, 200});
 

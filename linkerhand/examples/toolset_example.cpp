@@ -75,7 +75,7 @@ void exit()
     if (channel == COMM_TYPE::COMM_CAN_0) can_channel = "can0";
     if (channel == COMM_TYPE::COMM_CAN_1) can_channel = "can1";
     
-    system(std::string("sudo /usr/sbin/ip link set " + can_channel + " down").c_str());
+    // system(std::string("sudo /usr/sbin/ip link set " + can_channel + " down").c_str());
     exit(0);
 }
 
