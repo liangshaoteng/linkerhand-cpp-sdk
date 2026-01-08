@@ -1,71 +1,105 @@
 # LinkerHand-CPP-SDK
 
-## 概述
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/Platform-Linux-blue.svg)](https://www.linux.org/)
+[![Architecture](https://img.shields.io/badge/Arch-x86__64%20%7C%20aarch64-lightgrey.svg)]()
 
-LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发，用于 O6、L6、L7、L10、L20、L21、L25 型号灵巧手的驱动软件和 Demo 示例。
+> 用于灵心巧手系列灵巧手的 C++ 软件开发工具包
 
-## 安装
+LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官方 C++ SDK，提供完整的 API 接口用于控制 O6、L6、L7、L10、L20、L21、L25 等型号的灵巧手设备。
 
-### ubuntu
+## 📋 目录
 
-- 下载 SDK
+- [特性](#-特性)
+- [支持的型号](#-支持的型号)
+- [系统要求](#-系统要求)
+- [快速开始](#-快速开始)
+- [安装](#-安装)
+- [使用示例](#-使用示例)
+- [API 文档](#-api-文档)
+- [通信协议](#-通信协议)
+- [项目结构](#-项目结构)
+- [构建项目](#-构建项目)
+- [贡献](#-贡献)
+- [许可证](#-许可证)
+- [联系我们](#-联系我们)
+
+## ✨ 特性
+
+- 🎯 **多型号支持** - 支持 O6、L6、L7、L10、L20、L21、L25 等多种型号
+- 🚀 **简单易用** - 提供简洁的 C++ API 接口
+- 🔌 **多通信协议** - 支持 CAN、Modbus、EtherCAT 等通信方式
+- 📊 **传感器数据** - 实时获取压力、温度、电流等传感器数据
+- 🎮 **精确控制** - 支持关节位置、速度、扭矩的精确控制
+- 🔄 **实时反馈** - 获取关节状态、电机故障码等实时信息
+- 🛠️ **跨平台** - 支持 Linux (x86_64, aarch64)
+- 📚 **完整文档** - 提供详细的 API 文档和使用示例
+
+## 💻 系统要求
+
+- **操作系统**: Linux (Ubuntu 18.04+ 推荐)
+- **架构**: x86_64 或 aarch64
+- **编译器**: GCC 7.0+ 或 Clang 5.0+
+- **CMake**: 3.5 或更高版本
+- **依赖**: pthread
+
+## 🚀 快速开始
+
+### 1. 克隆仓库
 
 ```bash
 git clone https://github.com/linker-bot/linkerhand-cpp-sdk.git
+cd linkerhand-cpp-sdk
 ```
 
-- 启动脚本
+### 2. 使用安装脚本（推荐）
+
 ```bash
-cd linker_hand_cpp_sdk/linker_hand
 ./script.sh
 ```
-![alt text](linkerhand/img/script.png)
-- 运行示例
 
-```bash
-cd build
-./toolset_example
-```
+选择选项 `[2]: Install SDK` 进行构建和安装。
 
-![alt text](linkerhand/img/example.png) 
+### 3. 基本使用示例
 
-## 快速开始
-
-- 创建 main.cpp 文件，并添加以下代码：
+创建 `main.cpp` 文件：
 
 ```cpp
-// main.cpp
 #include "LinkerHandApi.h"
+#include <iostream>
+#include <thread>
+#include <chrono>
 
 int main() {
-
-    // 调用API接口
+    // 初始化 L10 型号右手
     LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
-
+    
     // 获取版本信息
-    std::cout << hand.getVersion() << std::endl;
-
-    // 握拳
+    std::cout << "SDK Version: " << hand.getVersion() << std::endl;
+    
+    // 握拳动作
     std::vector<uint8_t> fist_pose = {101, 60, 0, 0, 0, 0, 255, 255, 255, 51};
     hand.fingerMove(fist_pose);
     std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    // 张开
+    
+    // 张开动作
     std::vector<uint8_t> open_pose = {255, 104, 255, 255, 255, 255, 255, 255, 255, 71};
     hand.fingerMove(open_pose);
     std::this_thread::sleep_for(std::chrono::seconds(1));
-
+    
     return 0;
 }
 ```
 
-- 创建 CMakeLists.txt 文件，并添加以下配置：
+### 4. 编译和运行
+
+创建 `CMakeLists.txt`:
 
 ```cmake
-# CMakeLists.txt
 cmake_minimum_required(VERSION 3.5)
 project(MyProject)
 
+# 检测系统架构
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
     set(LIB_SUBDIR "x86_64")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
@@ -75,101 +109,272 @@ else()
     set(LIB_SUBDIR "x86_64")
 endif()
 
-#-----------------------------------------------------------------------------
-# LINKER_HAND_CPP_SDK
-#-----------------------------------------------------------------------------
+# 查找库文件
 find_library(LINKER_HAND_LIB
-    NAMES linkerhand_cpp_sdk linkerhand_cpp
+    NAMES linkerhand_cpp_sdk
     PATHS ${CMAKE_CURRENT_SOURCE_DIR}/lib/${LIB_SUBDIR}
         /usr/local/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
         /usr/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
-        ${CMAKE_INSTALL_PREFIX}/lib/linkerhand-cpp-sdk/${LIB_SUBDIR}
     NO_DEFAULT_PATH
 )
 
+# 查找头文件
 set(LINKER_HAND_INCLUDE_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     /usr/local/include/linkerhand-cpp-sdk
     /usr/include/linkerhand-cpp-sdk
-    ${CMAKE_INSTALL_PREFIX}/include/linkerhand-cpp-sdk
 )
 
 if(NOT LINKER_HAND_LIB)
     message(FATAL_ERROR "linkerhand_cpp_sdk library not found!")
 endif()
 
-if(NOT LINKER_HAND_INCLUDE_DIR)
-    message(FATAL_ERROR "LinkerHand headers not found!")
-endif()
+# 包含头文件
+include_directories(${LINKER_HAND_INCLUDE_DIR})
 
-message(STATUS "Found linkerhand_cpp_sdk library: ${LINKER_HAND_LIB}")
-message(STATUS "Found LinkerHand headers: ${LINKER_HAND_INCLUDE_DIR}")
-
-#-----------------------------------------------------------------------------
-# INCLUDE_DIRECTORIES
-#-----------------------------------------------------------------------------
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${LINKER_HAND_INCLUDE_DIR}
-)
-
-#-----------------------------------------------------------------------------
-# EXECUTABLE
-#-----------------------------------------------------------------------------
+# 创建可执行文件
 add_executable(my_project main.cpp)
 target_link_libraries(my_project ${LINKER_HAND_LIB} pthread)
-
-  ```
-
-- 文件结构
 ```
-├── example
-│   ├── CMakeLists.txt
-│   └── main.cpp
-```
-- 编译
+
+编译和运行：
+
 ```bash
-cd example
+mkdir build && cd build
+cmake ..
+make
+./my_project
+```
+
+## 📦 安装
+
+### 方法一：使用安装脚本（推荐）
+
+```bash
+./script.sh
+```
+
+脚本提供以下功能：
+- `[1]`: 构建 SDK
+- `[2]`: 构建并安装 SDK
+- `[3]`: 卸载 SDK
+- `[6]`: 运行示例程序
+
+### 方法二：手动安装
+
+```bash
+# 构建项目
+mkdir build && cd build
+cmake ..
+make
+
+# 安装（需要 root 权限）
+sudo make install
+```
+
+安装后，库文件将安装到：
+- 头文件: `/usr/local/include/linkerhand-cpp-sdk/`
+- 库文件: `/usr/local/lib/linkerhand-cpp-sdk/{arch}/`
+
+## 💡 使用示例
+
+### 基本控制
+
+```cpp
+#include "LinkerHandApi.h"
+#include <vector>
+#include <thread>
+#include <chrono>
+
+int main() {
+    // 创建 API 实例
+    LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
+    
+    // 设置速度
+    std::vector<uint8_t> speed = {200, 200, 200, 200, 200};
+    hand.setSpeed(speed);
+    
+    // 设置扭矩
+    std::vector<uint8_t> torque = {255, 255, 255, 255, 255};
+    hand.setTorque(torque);
+    
+    // 控制手指运动
+    std::vector<uint8_t> pose = {128, 128, 128, 128, 128, 128, 128, 128, 128, 128};
+    hand.fingerMove(pose);
+    
+    return 0;
+}
+```
+
+### 获取传感器数据
+
+```cpp
+// 获取压力数据
+auto force_data = hand.getForce();
+
+// 获取关节状态
+auto joint_state = hand.getState();
+
+// 获取电机温度
+auto temperature = hand.getTemperature();
+
+// 获取故障码
+auto fault_code = hand.getFaultCode();
+```
+
+### 使用弧度制控制（L10/L20/L21/L25）
+
+```cpp
+// 使用弧度制控制关节
+std::vector<double> pose_arc = {0.5, 0.3, 0.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+hand.fingerMoveArc(pose_arc);
+
+// 获取弧度制关节状态
+auto state_arc = hand.getStateArc();
+```
+
+更多示例请参考 `examples/` 目录。
+
+## 📚 API 文档
+
+详细的 API 文档请参考：[API 参考文档](docs/API-Reference.md)
+
+### 主要 API 接口
+
+#### 控制接口
+- `fingerMove()` - 设置关节位置（0-255）
+- `fingerMoveArc()` - 设置关节位置（弧度制）
+- `setSpeed()` - 设置运动速度
+- `setTorque()` - 设置扭矩限制
+
+#### 状态查询接口
+- `getState()` - 获取关节状态
+- `getStateArc()` - 获取关节状态（弧度制）
+- `getSpeed()` - 获取当前速度设置
+- `getTorque()` - 获取当前扭矩设置
+
+#### 传感器接口
+- `getForce()` - 获取压力数据（法向、切向、方向、接近感应）
+- `getTemperature()` - 获取电机温度
+- `getFaultCode()` - 获取电机故障码
+- `getCurrent()` - 获取电机电流
+
+## 🔌 通信协议
+
+SDK 支持以下通信协议：
+
+- **CAN** (`COMM_CAN_0`, `COMM_CAN_1`) - CAN 总线通信
+- **Modbus** (`COMM_MODBUS`) - Modbus 协议
+- **EtherCAT** (`COMM_ETHERCAT`) - EtherCAT 实时以太网
+
+默认使用 `COMM_CAN_0`。
+
+```cpp
+// 使用 Modbus 通信
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
+```
+
+## 📁 项目结构
+
+```
+linkerhand-cpp-sdk/
+├── include/              # 头文件
+│   ├── LinkerHandApi.h   # 主 API 接口
+│   ├── Common.h          # 通用定义
+│   └── ...
+├── lib/                  # 预编译库文件
+│   ├── x86_64/          # x86_64 架构库
+│   └── aarch64/         # aarch64 架构库
+├── examples/            # 示例代码
+│   ├── toolset_example.cpp
+│   └── action_group_show_l10.cpp
+├── docs/                # 文档
+│   └── API-Reference.md
+├── src/                 # 源代码
+├── third_party/         # 第三方依赖
+├── CMakeLists.txt       # CMake 配置
+├── script.sh            # 安装脚本
+└── README.md            # 本文档
+```
+
+## 🔨 构建项目
+
+### 使用 CMake
+
+```bash
 mkdir build
 cd build
 cmake ..
 make
 ```
-- 运行
+
+### 运行示例
 
 ```bash
-./my_project
+cd build
+./toolset_example
+./action_group_show_l10
 ```
 
-- position 与手指关节对照表
+## 📖 关节映射表
 
+不同型号的关节映射关系：
+
+### L6/O6
 ```
-L6/O6: ["大拇指弯曲", "大拇指横摆", "食指弯曲", "中指弯曲", "无名指弯曲", "小拇指弯曲"]
-
-L7:  ["大拇指弯曲", "大拇指横摆","食指弯曲", "中指弯曲", "无名指弯曲","小拇指弯曲","拇指旋转"]
-
-L10: ["拇指根部", "拇指侧摆","食指根部", "中指根部", "无名指根部","小指根部","食指侧摆","无名指侧摆","小指侧摆","拇指旋转"]
-
-L20: ["拇指根部", "食指根部", "中指根部", "无名指根部","小指根部","拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小指侧摆","拇指横摆","预留","预留","预留","预留","拇指尖部","食指末端","中指末端","无名指末端","小指末端"]
-
-L21: ["大拇指根部", "食指根部", "中指根部","无名指根部","小拇指根部","大拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小拇指侧摆","大拇指横滚","预留","预留","预留","预留","大拇指中部","预留","预留","预留","预留","大拇指指尖","食指指尖","中指指尖","无名指指尖","小拇指指尖"]
-
-L25: ["大拇指根部", "食指根部", "中指根部","无名指根部","小拇指根部","大拇指侧摆","食指侧摆","中指侧摆","无名指侧摆","小拇指侧摆","大拇指横滚","预留","预留","预留","预留","大拇指中部","食指中部","中指中部","无名指中部","小拇指中部","大拇指指尖","食指指尖","中指指尖","无名指指尖","小拇指指尖"]
+["大拇指弯曲", "大拇指横摆", "食指弯曲", "中指弯曲", "无名指弯曲", "小拇指弯曲"]
 ```
 
-## 示例
+### L7
+```
+["大拇指弯曲", "大拇指横摆", "食指弯曲", "中指弯曲", "无名指弯曲", "小拇指弯曲", "拇指旋转"]
+```
 
-| 序号 | 文件名称              | 描述                                                  |
-| :--- | :-------------------- | :---------------------------------------------------- |
-| 1    | examples              | 示例集合（支持 O6/L6、L7、L10、L20、L21、L25 灵巧手） |
-| 2    | action_group_show_l10 | 灵巧手 L10 手指舞                                     |
+### L10
+```
+["拇指根部", "拇指侧摆", "食指根部", "中指根部", "无名指根部", "小指根部", 
+ "食指侧摆", "无名指侧摆", "小指侧摆", "拇指旋转"]
+```
 
-## API 文档
+### L20
+```
+["拇指根部", "食指根部", "中指根部", "无名指根部", "小指根部",
+ "拇指侧摆", "食指侧摆", "中指侧摆", "无名指侧摆", "小指侧摆",
+ "拇指横摆", "预留", "预留", "预留", "预留",
+ "拇指尖部", "食指末端", "中指末端", "无名指末端", "小指末端"]
+```
 
-- [C++ API 文档](docs/API-Reference.md)
+### L21/L25
+详细映射请参考 [API 文档](docs/API-Reference.md)。
 
-## 许可证
+## 🤝 贡献
+
+我们欢迎社区贡献！请参考以下步骤：
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
+
+更多贡献指南请参考 [CONTRIBUTING.md](CONTRIBUTING.md)（待创建）。
+
+## 📄 许可证
 
 本项目采用 [MIT 许可证](LICENSE)。
 
-## 版本更新
+Copyright (c) 2026 灵心巧手（北京）科技有限公司
+
+## 📞 联系我们
+
+- **官方网站**: [https://linkerbot.cn](https://linkerbot.cn)
+- **关于我们**: [https://linkerbot.cn/aboutUs](https://linkerbot.cn/aboutUs)
+- **GitHub**: [https://github.com/linker-bot/linkerhand-cpp-sdk](https://github.com/linker-bot/linkerhand-cpp-sdk)
+
+## 📝 更新日志
+
+详细的版本更新记录请参考 [CHANGELOG.md](CHANGELOG.md)（待创建）。
+
+---
+
+**注意**: 使用前请确保设备已正确连接并配置好通信接口。
