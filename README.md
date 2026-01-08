@@ -166,6 +166,10 @@ L25: ["大拇指根部", "食指根部", "中指根部","无名指根部","小�
 
 ## API 文档
 
-- [C++ API 文档](linkerhand/docs/API-Reference.md)
+- [C++ API 文档](docs/API-Reference.md)
+
+## 许可证
+
+本项目采用 [MIT 许可证](LICENSE)。
 
 ## 版本更新
