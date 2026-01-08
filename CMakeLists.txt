@@ -59,3 +59,14 @@ target_link_libraries(toolset_example ${LINKER_HAND_LIB} pthread)
 
 add_executable(action_group_show_l10 examples/action_group_show_l10.cpp)
 target_link_libraries(action_group_show_l10 ${LINKER_HAND_LIB} pthread)
+
+#-----------------------------------------------------------------------------
+# TESTING
+#-----------------------------------------------------------------------------
+# 添加选项以启用/禁用测试
+option(BUILD_TESTING "Build the testing tree" ON)
+
+# 如果启用测试，包含测试子目录
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

@@ -239,6 +239,38 @@ auto state_arc = hand.getStateArc();
 
 详细的 API 文档请参考：[API 参考文档](docs/API-Reference.md)
 
+## 🧪 测试
+
+### 运行测试
+
+```bash
+# 构建并运行测试
+mkdir build && cd build
+cmake .. -DBUILD_TESTING=ON
+make
+ctest --output-on-failure
+```
+
+### 测试文档
+
+- **测试指南**: [测试文档](docs/TESTING.md) - 详细的测试框架安装、编写和运行指南
+- **测试说明**: [测试目录 README](tests/README.md) - 测试结构和快速参考
+
+测试文档包含：
+- 测试框架安装和配置（Google Test）
+- 如何编写和运行测试
+- 测试覆盖率配置
+- 测试最佳实践
+- CI/CD 集成指南
+
+### 当前测试覆盖
+
+项目已包含以下单元测试：
+- ✅ `test_Common.cpp` - Common.h 枚举和类型测试
+- ✅ `test_RangeToArc.cpp` - 范围到弧度转换函数测试
+- ✅ `test_IHand_Utils.cpp` - IHand 工具函数测试
+- ✅ `test_CanFrame.cpp` - CAN 帧结构测试
+
 ### 主要 API 接口
 
 #### 控制接口
