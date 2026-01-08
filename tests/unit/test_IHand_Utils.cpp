@@ -158,8 +158,19 @@ TEST(IHandUtilsTest, GetSubVectorEdgeCases) {
         large_vec[i] = static_cast<uint8_t>(i % 256);
     }
     std::vector<uint8_t> result = hand.getSubVector(large_vec);
+    
+    // 验证大小：跳过第一个元素，所以应该是 999
     EXPECT_EQ(result.size(), 999);
+    
+    // 验证第一个元素：应该是原始向量的第二个元素 (1)
     EXPECT_EQ(result[0], 1);
-    EXPECT_EQ(result[998], 255);
+    
+    // 修复：result[998] 对应 large_vec[999]
+    // large_vec[999] = 999 % 256 = 231
+    EXPECT_EQ(static_cast<int>(result[998]), 231);
+    
+    // 附加验证：确保理解正确
+    // result[254] 对应 large_vec[255] = 255
+    EXPECT_EQ(static_cast<int>(result[254]), 255);
 }
 

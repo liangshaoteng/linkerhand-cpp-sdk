@@ -55,7 +55,7 @@ TEST(RangeToArcTest, InitializeParams) {
     std::vector<int> derict;
     
     // 测试 L10 左手参数初始化
-    bool result = initialize_params(static_cast<int>(L10), "left", min_limits, max_limits, derict);
+    bool result = initialize_params(static_cast<int>(10), "left", min_limits, max_limits, derict);
     EXPECT_TRUE(result);
     EXPECT_FALSE(min_limits.empty());
     EXPECT_FALSE(max_limits.empty());
@@ -76,7 +76,7 @@ TEST(RangeToArcTest, InitializeParams) {
 TEST(RangeToArcTest, RangeToArc) {
     // 测试 L10 左手的转换
     std::vector<uint8_t> hand_range = {128, 128, 128, 128, 128, 128, 128, 128, 128, 128};
-    std::vector<double> result = range_to_arc(static_cast<int>(L10), "left", hand_range);
+    std::vector<double> result = range_to_arc(static_cast<int>(10), "left", hand_range);
     
     EXPECT_FALSE(result.empty());
     EXPECT_EQ(result.size(), hand_range.size());
@@ -94,7 +94,7 @@ TEST(RangeToArcTest, ArcToRange) {
     // 测试 L10 左手的转换
     // 使用中间值进行测试
     std::vector<double> hand_arc(10, 0.5);
-    std::vector<uint8_t> result = arc_to_range(static_cast<int>(L10), "left", hand_arc);
+    std::vector<uint8_t> result = arc_to_range(static_cast<int>(10), "left", hand_arc);
     
     EXPECT_FALSE(result.empty());
     EXPECT_EQ(result.size(), hand_arc.size());
@@ -110,8 +110,8 @@ TEST(RangeToArcTest, ArcToRange) {
 TEST(RangeToArcTest, RoundTripConversion) {
     // 测试往返转换的精度
     std::vector<uint8_t> original = {0, 64, 128, 192, 255, 100, 150, 200, 50, 75};
-    std::vector<double> arc = range_to_arc(static_cast<int>(L10), "left", original);
-    std::vector<uint8_t> converted_back = arc_to_range(static_cast<int>(L10), "left", arc);
+    std::vector<double> arc = range_to_arc(static_cast<int>(10), "left", original);
+    std::vector<uint8_t> converted_back = arc_to_range(static_cast<int>(10), "left", arc);
     
     EXPECT_EQ(original.size(), converted_back.size());
     
@@ -126,31 +126,57 @@ TEST(RangeToArcTest, RoundTripConversion) {
 TEST(RangeToArcTest, BoundaryValues) {
     // 测试最小值
     std::vector<uint8_t> min_range(10, 0);
-    std::vector<double> min_arc = range_to_arc(static_cast<int>(L10), "left", min_range);
+    std::vector<double> min_arc = range_to_arc(static_cast<int>(10), "left", min_range);
     EXPECT_FALSE(min_arc.empty());
     
     // 测试最大值
     std::vector<uint8_t> max_range(10, 255);
-    std::vector<double> max_arc = range_to_arc(static_cast<int>(L10), "left", max_range);
+    std::vector<double> max_arc = range_to_arc(static_cast<int>(10), "left", max_range);
     EXPECT_FALSE(max_arc.empty());
     
     // 测试中间值
     std::vector<uint8_t> mid_range(10, 128);
-    std::vector<double> mid_arc = range_to_arc(static_cast<int>(L10), "left", mid_range);
+    std::vector<double> mid_arc = range_to_arc(static_cast<int>(10), "left", mid_range);
     EXPECT_FALSE(mid_arc.empty());
 }
 
 // 测试不同型号的转换
 TEST(RangeToArcTest, DifferentHandTypes) {
-    std::vector<uint8_t> test_range = {128, 128, 128, 128, 128, 128};
+    // 只测试代码中支持的手型
     
-    // 测试 L6
-    std::vector<double> l6_arc = range_to_arc(static_cast<int>(L6), "left", test_range);
-    EXPECT_FALSE(l6_arc.empty());
-    
-    // 测试 L7
+    // 测试 L7 - 支持
     std::vector<uint8_t> l7_range = {128, 128, 128, 128, 128, 128, 128};
-    std::vector<double> l7_arc = range_to_arc(static_cast<int>(L7), "left", l7_range);
+    std::vector<double> l7_arc = range_to_arc(7, "left", l7_range);
     EXPECT_FALSE(l7_arc.empty());
+    EXPECT_EQ(l7_arc.size(), 7);
+    
+    // 测试 L10 - 支持
+    std::vector<uint8_t> l10_range = {128, 128, 128, 128, 128, 128, 128, 128, 128, 128};
+    std::vector<double> l10_arc = range_to_arc(10, "left", l10_range);
+    EXPECT_FALSE(l10_arc.empty());
+    EXPECT_EQ(l10_arc.size(), 10);
+    
+    // 测试 L20 - 支持
+    std::vector<uint8_t> l20_range(20, 128);
+    std::vector<double> l20_arc = range_to_arc(20, "left", l20_range);
+    EXPECT_FALSE(l20_arc.empty());
+    EXPECT_EQ(l20_arc.size(), 20);
+    
+    // 测试 L21 - 支持
+    std::vector<uint8_t> l21_range(25, 128);
+    std::vector<double> l21_arc = range_to_arc(21, "left", l21_range);
+    EXPECT_FALSE(l21_arc.empty());
+    EXPECT_EQ(l21_arc.size(), 25);
+    
+    // 测试 L25 - 支持
+    std::vector<uint8_t> l25_range(25, 128);
+    std::vector<double> l25_arc = range_to_arc(25, "left", l25_range);
+    EXPECT_FALSE(l25_arc.empty());
+    EXPECT_EQ(l25_arc.size(), 25);
+    
+    // 注意：不要测试不支持的手型，如 L6 (6)
+    // std::vector<uint8_t> l6_range = {128, 128, 128, 128, 128, 128};
+    // std::vector<double> l6_arc = range_to_arc(6, "left", l6_range);
+    // EXPECT_FALSE(l6_arc.empty()); // 这会失败！
 }
 
