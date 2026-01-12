@@ -1,5 +1,5 @@
-#ifndef LINKER_HAND_L20_H
-#define LINKER_HAND_L20_H
+#ifndef LINKERHAND_L20_H
+#define LINKERHAND_L20_H
 
 #include <thread>
 #include <mutex>
@@ -169,4 +169,4 @@ private:
     uint8_t sensor_type = 0;
 };
 }
-#endif // LINKER_HAND_L20_H
+#endif // LINKERHAND_L20_H

@@ -1,5 +1,5 @@
-#ifndef MOD_BUS_H
-#define MOD_BUS_H
+#ifndef LINKERHAND_MOD_BUS_H
+#define LINKERHAND_MOD_BUS_H
 #if USE_RMAN
 #include <cstdint>
 #include <vector>
@@ -44,4 +44,4 @@ namespace Communication //Communicator
     };
 }
 #endif
-#endif // MOD_BUS_H
+#endif // LINKERHAND_MOD_BUS_H

@@ -1,5 +1,5 @@
-#ifndef MODBUS_L10_H
-#define MODBUS_L10_H
+#ifndef LINKERHAND_MODBUS_L10_H
+#define LINKERHAND_MODBUS_L10_H
 #if USE_RMAN
 #include <thread>
 #include <mutex>
@@ -53,4 +53,4 @@ private:
 };
 }
 #endif
-#endif // MODBUS_L10_H
+#endif // LINKERHAND_MODBUS_L10_H

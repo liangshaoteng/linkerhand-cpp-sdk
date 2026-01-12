@@ -1,5 +1,5 @@
-#ifndef LINKER_HAND_L10_H
-#define LINKER_HAND_L10_H
+#ifndef LINKERHAND_L10_H
+#define LINKERHAND_L10_H
 
 #include <thread>
 #include <mutex>
@@ -145,4 +145,4 @@ private:
     uint8_t sensor_type = 0;
 };
 } // namespace LinkerHandL10
-#endif // LINKER_HAND_L10_H
+#endif // LINKERHAND_L10_H

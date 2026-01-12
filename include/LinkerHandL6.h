@@ -1,5 +1,5 @@
-#ifndef LINKER_HAND_L6_H
-#define LINKER_HAND_L6_H
+#ifndef LINKERHAND_L6_H
+#define LINKERHAND_L6_H
 
 #include <thread>
 #include <mutex>
@@ -143,4 +143,4 @@ private:
     std::string getErrorDescription(uint8_t error_code);
 };
 } // namespace LinkerHandL6
-#endif // LINKER_HAND_L6_H
+#endif // LINKERHAND_L6_H

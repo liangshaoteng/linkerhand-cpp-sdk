@@ -1,5 +1,5 @@
-#ifndef CAN_BUS_FACTORY_H
-#define CAN_BUS_FACTORY_H
+#ifndef LINKERHAND_CAN_BUS_FACTORY_H
+#define LINKERHAND_CAN_BUS_FACTORY_H
 
 #include "ICanBus.h"
 #include "CanBus.h"
@@ -10,8 +10,8 @@
 
 #include <stdexcept>
 
-namespace Communication
-{
+namespace linkerhand {
+namespace communication {
     class CanBusFactory
     {
     public:
@@ -53,6 +53,10 @@ namespace Communication
             #endif
         }
     };
-}
+} // namespace communication
+} // namespace linkerhand
 
-#endif // CAN_BUS_FACTORY_H
+// 向后兼容：在全局命名空间中提供别名
+namespace Communication = linkerhand::communication;
+
+#endif // LINKERHAND_CAN_BUS_FACTORY_H

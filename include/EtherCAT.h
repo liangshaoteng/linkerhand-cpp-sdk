@@ -1,6 +1,6 @@
 #ifdef __linux__
-#ifndef ETHERCAT_H
-#define ETHERCAT_H
+#ifndef LINKERHAND_ETHERCAT_H
+#define LINKERHAND_ETHERCAT_H
 
 #include <iostream>
 #include <unistd.h>
@@ -115,5 +115,5 @@ namespace Communication //Communicator
 	};
 }
 
-#endif // ETHERCAT_H
+#endif // LINKERHAND_ETHERCAT_H
 #endif

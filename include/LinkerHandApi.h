@@ -1,15 +1,33 @@
-#ifndef LINKER_HAND_API_H
-#define LINKER_HAND_API_H
+#ifndef LINKERHAND_API_H
+#define LINKERHAND_API_H
 
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <string>
 #include "HandFactory.h"
+#include "Common.h"
+#include "IHand.h"
 
+namespace linkerhand {
+namespace api {
+
+/**
+ * @brief LinkerHand API 主类
+ * 
+ * 提供统一的接口用于控制各种型号的灵巧手设备
+ */
 class LinkerHandApi
 {
 public:
-	LinkerHandApi(const LINKER_HAND &handJoint, const HAND_TYPE &handType, const COMM_TYPE commType = COMM_CAN_0);
+	/**
+	 * @brief 构造函数
+	 * @param handJoint 手型号（LINKER_HAND 枚举）
+	 * @param handType 手类型（左手/右手）
+	 * @param commType 通信类型（默认 CAN_0）
+	 */
+	LinkerHandApi(const LINKER_HAND &handJoint, const HAND_TYPE &handType, 
+	              const COMM_TYPE commType = COMM_CAN_0);
 	~LinkerHandApi();
 
 	// 设置关节位置
@@ -60,11 +78,17 @@ private:
 	void getApproachInc();
 
 private:
-	std::unique_ptr<IHand> hand;
+	std::unique_ptr<hand::IHand> hand;
 	uint32_t handId;
 public:
 	LINKER_HAND handJoint_;
 	HAND_TYPE handType_;
 };
 
-#endif
+} // namespace api
+} // namespace linkerhand
+
+// 向后兼容：在全局命名空间中提供别名
+using LinkerHandApi = linkerhand::api::LinkerHandApi;
+
+#endif // LINKERHAND_API_H

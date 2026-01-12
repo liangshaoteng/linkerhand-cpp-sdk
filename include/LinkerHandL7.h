@@ -1,5 +1,5 @@
-#ifndef LINKER_HAND_L7_H
-#define LINKER_HAND_L7_H
+#ifndef LINKERHAND_L7_H
+#define LINKERHAND_L7_H
 
 #include <thread>
 #include <mutex>
@@ -130,4 +130,4 @@ private:
     uint8_t sensor_type = 0;
 };
 } // namespace LinkerHandL7
-#endif // LINKER_HAND_L7_H
+#endif // LINKERHAND_L7_H

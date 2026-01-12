@@ -1,5 +1,5 @@
-#ifndef HAND_FACTORY_H
-#define HAND_FACTORY_H
+#ifndef LINKERHAND_HAND_FACTORY_H
+#define LINKERHAND_HAND_FACTORY_H
 
 #include "IHand.h"
 #include "LinkerHandL6.h"
@@ -7,12 +7,28 @@
 #include "LinkerHandL10.h"
 #include "LinkerHandL20.h"
 #include "LinkerHandL25.h"
-
 #include "ModbusLinkerHandL10.h"
+#include "Common.h"
 
+namespace linkerhand {
+namespace factory {
+
+/**
+ * @brief 手型号工厂类
+ * 
+ * 根据手型号、手类型和通信类型创建对应的手实例
+ */
 class HandFactory {
 public:
-    static std::unique_ptr<IHand> createHand(LINKER_HAND type, uint32_t handId, COMM_TYPE commType) {
+    /**
+     * @brief 创建手实例
+     * @param type 手型号
+     * @param handId 手ID（左手/右手）
+     * @param commType 通信类型
+     * @return 手实例的智能指针
+     * @throws std::invalid_argument 如果参数无效
+     */
+    static std::unique_ptr<hand::IHand> createHand(LINKER_HAND type, uint32_t handId, COMM_TYPE commType) {
 
         if (handId != HAND_TYPE::LEFT && handId != HAND_TYPE::RIGHT)
         {
@@ -85,4 +101,10 @@ public:
     }
 };
 
-#endif // HAND_FACTORY_H
+} // namespace factory
+} // namespace linkerhand
+
+// 向后兼容：在全局命名空间中提供别名
+using HandFactory = linkerhand::factory::HandFactory;
+
+#endif // LINKERHAND_HAND_FACTORY_H

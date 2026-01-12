@@ -1,6 +1,6 @@
 #ifdef _WIN32
-#ifndef PCAN_BUS_H
-#define PCAN_BUS_H
+#ifndef LINKERHAND_PCAN_BUS_H
+#define LINKERHAND_PCAN_BUS_H
 
 #include <iostream>
 #include <windows.h>
@@ -44,5 +44,5 @@ namespace Communication
         std::queue<TPCANMsg> send_queue;
     };
 }
-#endif // PCAN_BUS_H
+#endif // LINKERHAND_PCAN_BUS_H
 #endif
