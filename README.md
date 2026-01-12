@@ -11,7 +11,6 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 ## 📋 目录
 
 - [特性](#-特性)
-- [支持的型号](#-支持的型号)
 - [系统要求](#-系统要求)
 - [快速开始](#-快速开始)
 - [安装](#-安装)
@@ -30,7 +29,7 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 
 - 🎯 **多型号支持** - 支持 O6、L6、L7、L10、L20、L21、L25 等多种型号
 - 🚀 **简单易用** - 提供简洁的 C++ API 接口
-- 🔌 **多通信协议** - 支持 CAN、Modbus、EtherCAT 等通信方式
+- 🔌 **通信协议** - 支持 CAN 通信
 - 📊 **传感器数据** - 实时获取压力、温度、电流等传感器数据
 - 🎮 **精确控制** - 支持关节位置、速度、扭矩的精确控制
 - 🔄 **实时反馈** - 获取关节状态、电机故障码等实时信息
@@ -42,7 +41,7 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 - **操作系统**: Linux (Ubuntu 18.04+ 推荐)
 - **架构**: x86_64 或 aarch64
 - **编译器**: GCC 7.0+ 或 Clang 5.0+
-- **CMake**: 3.5 或更高版本
+- **CMake**: 3.11+
 - **依赖**: pthread
 
 ## 🚀 快速开始
@@ -261,7 +260,7 @@ ctest --output-on-failure
 
 ### 测试文档
 
-- **测试指南**: [测试文档](docs/TESTING.md) - 详细的测试框架安装、编写和运行指南
+- **测试指南**: [测试文档](docs/TESTING.md)（待创建） - 详细的测试框架安装、编写和运行指南
 - **测试说明**: [测试目录 README](tests/README.md) - 测试结构和快速参考
 
 测试文档包含：
@@ -304,14 +303,13 @@ ctest --output-on-failure
 SDK 支持以下通信协议：
 
 - **CAN** (`COMM_CAN_0`, `COMM_CAN_1`) - CAN 总线通信
-- **Modbus** (`COMM_MODBUS`) - Modbus 协议
-- **EtherCAT** (`COMM_ETHERCAT`) - EtherCAT 实时以太网
+
 
 默认使用 `COMM_CAN_0`。
 
 ```cpp
-// 使用 Modbus 通信
-LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
+// 使用 COMM_CAN_1 通信
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_1);
 ```
 
 ## 📁 项目结构

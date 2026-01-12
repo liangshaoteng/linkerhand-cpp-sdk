@@ -70,8 +70,7 @@ sudo make install
 - **操作系统**: Linux (Ubuntu 18.04+ 推荐)
 - **架构**: x86_64、aarch64
 - **编译器**: GCC 7.0+ 或 Clang 5.0+
-- **CMake**: 3.5 或更高版本
-
+- **CMake**: 3.11+
 ---
 
 ### Q4: 如何卸载 SDK？
@@ -140,8 +139,6 @@ sudo rm -rf /usr/local/lib/linkerhand-cpp-sdk
 **A**: 根据您的硬件配置选择：
 
 - **CAN 总线**: 默认使用 `COMM_CAN_0`，如果有多个 CAN 接口可使用 `COMM_CAN_1`
-- **Modbus**: 使用 `COMM_MODBUS`
-- **EtherCAT**: 使用 `COMM_ETHERCAT`
 
 ```cpp
 // CAN0（默认）
@@ -150,11 +147,6 @@ LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
 // CAN1
 LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_1);
 
-// Modbus
-LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
-
-// EtherCAT
-LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_ETHERCAT);
 ```
 
 ---
@@ -363,7 +355,6 @@ for (size_t finger = 0; finger < force.size(); finger++) {
 
 **A**: 响应时间取决于多个因素：
 
-- **通信协议**: CAN 通常比 Modbus 快
 - **系统负载**: 系统负载高时响应会变慢
 - **网络延迟**: EtherCAT 网络延迟
 
@@ -399,7 +390,6 @@ for (size_t finger = 0; finger < force.size(); finger++) {
    - 缓存不需要实时更新的数据
 
 4. **优化通信**:
-   - 使用更快的通信协议（如 EtherCAT）
    - 优化通信参数
 
 ---
