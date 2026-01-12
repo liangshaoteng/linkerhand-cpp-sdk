@@ -212,13 +212,26 @@ jobs:
       - name: 检查文件编码和换行符
         run: |
           echo "检查文件编码和换行符..."
-          # 检查是否有 Windows 换行符
-          if find . -type f \( -name "*.cpp" -o -name "*.h" -o -name "*.cmake" -o -name "CMakeLists.txt" \) \
-             -exec file {} \; | grep -q "CRLF"; then
-            echo "警告: 发现 Windows 换行符 (CRLF)"
+          # 检查是否有 Windows 换行符（排除第三方库目录）
+          CRLF_FILES=$(find . -type f \
+            ! -path "./third_party/*" \
+            \( -name "*.cpp" -o -name "*.h" -o -name "*.cmake" -o -name "CMakeLists.txt" \) \
+            -exec file {} \; | grep -i "CRLF" || true)
+
+          if [ -n "$CRLF_FILES" ]; then
+            echo "错误: 发现 Windows 换行符 (CRLF)"
+            echo ""
+            echo "以下文件需要修复："
+            echo "$CRLF_FILES"
+            echo ""
+            echo "修复方法（Linux/macOS）："
+            echo "  find . -type f ! -path './third_party/*' \\( -name '*.cpp' -o -name '*.h' -o -name '*.cmake' -o -name 'CMakeLists.txt' \\) -exec sed -i 's/\\r$//' {} \\;"
+            echo ""
+            echo "或者使用 dos2unix："
+            echo "  find . -type f ! -path './third_party/*' \\( -name '*.cpp' -o -name '*.h' -o -name '*.cmake' -o -name 'CMakeLists.txt' \\) -exec dos2unix {} \\;"
             exit 1
           fi
-          echo "✓ 文件编码检查通过"
+          echo "✓ 文件编码检查通过（已排除 third_party 目录）"
 
       - name: 检查 CMake 语法
         run: |

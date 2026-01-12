@@ -23,7 +23,7 @@ namespace Communication
         )
         {
             (void)handId;  // 标记为未使用，避免警告
-            
+
             #ifdef _WIN32
                 // Windows 平台
                 TPCANHandle channel = PCAN_USBBUS1;
@@ -32,24 +32,24 @@ namespace Communication
                     channel = PCAN_USBBUS2;
                 }
                 return std::make_unique<PCANBus>(channel, baudrate, linkerHand);
-                
+
             #else
                 // Linux/Unix 平台
                 if (interfaceOrChannel == "can0" || interfaceOrChannel == "can1") {
                     return std::make_unique<CanBus>(interfaceOrChannel, bitrate, linkerHand);
                 } 
-                
+
                 #if USE_ETHERCAT
                 else if (interfaceOrChannel == "ethercat") {
                     return std::make_unique<EtherCAT>(handId);
                 }
                 #endif
-                
+
                 // 默认情况：抛出异常或返回 nullptr
                 throw std::runtime_error("Unsupported CAN interface: " + interfaceOrChannel);
                 // 或者返回 nullptr:
                 // return nullptr;
-                
+
             #endif
         }
     };
