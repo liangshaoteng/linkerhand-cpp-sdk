@@ -11,7 +11,6 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 ## 📋 目录
 
 - [特性](#-特性)
-- [支持的型号](#-支持的型号)
 - [系统要求](#-系统要求)
 - [快速开始](#-快速开始)
 - [安装](#-安装)
@@ -20,6 +19,8 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 - [通信协议](#-通信协议)
 - [项目结构](#-项目结构)
 - [构建项目](#-构建项目)
+- [故障排查](#-故障排查)
+- [常见问题](#-常见问题)
 - [贡献](#-贡献)
 - [许可证](#-许可证)
 - [联系我们](#-联系我们)
@@ -28,7 +29,7 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 
 - 🎯 **多型号支持** - 支持 O6、L6、L7、L10、L20、L21、L25 等多种型号
 - 🚀 **简单易用** - 提供简洁的 C++ API 接口
-- 🔌 **多通信协议** - 支持 CAN、Modbus、EtherCAT 等通信方式
+- 🔌 **通信协议** - 支持 CAN 通信
 - 📊 **传感器数据** - 实时获取压力、温度、电流等传感器数据
 - 🎮 **精确控制** - 支持关节位置、速度、扭矩的精确控制
 - 🔄 **实时反馈** - 获取关节状态、电机故障码等实时信息
@@ -40,7 +41,7 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 - **操作系统**: Linux (Ubuntu 18.04+ 推荐)
 - **架构**: x86_64 或 aarch64
 - **编译器**: GCC 7.0+ 或 Clang 5.0+
-- **CMake**: 3.5 或更高版本
+- **CMake**: 3.11+
 - **依赖**: pthread
 
 ## 🚀 快速开始
@@ -73,20 +74,20 @@ cd linkerhand-cpp-sdk
 int main() {
     // 初始化 L10 型号右手
     LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
-    
+
     // 获取版本信息
     std::cout << "SDK Version: " << hand.getVersion() << std::endl;
-    
+
     // 握拳动作
     std::vector<uint8_t> fist_pose = {101, 60, 0, 0, 0, 0, 255, 255, 255, 51};
     hand.fingerMove(fist_pose);
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    
+
     // 张开动作
     std::vector<uint8_t> open_pose = {255, 104, 255, 255, 255, 255, 255, 255, 255, 71};
     hand.fingerMove(open_pose);
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    
+
     return 0;
 }
 ```
@@ -189,19 +190,19 @@ sudo make install
 int main() {
     // 创建 API 实例
     LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
-    
+
     // 设置速度
     std::vector<uint8_t> speed = {200, 200, 200, 200, 200};
     hand.setSpeed(speed);
-    
+
     // 设置扭矩
     std::vector<uint8_t> torque = {255, 255, 255, 255, 255};
     hand.setTorque(torque);
-    
+
     // 控制手指运动
     std::vector<uint8_t> pose = {128, 128, 128, 128, 128, 128, 128, 128, 128, 128};
     hand.fingerMove(pose);
-    
+
     return 0;
 }
 ```
@@ -233,11 +234,17 @@ hand.fingerMoveArc(pose_arc);
 auto state_arc = hand.getStateArc();
 ```
 
-更多示例请参考 `examples/` 目录。
+更多示例请参考 `examples/` 目录。详细说明请查看 [示例代码文档](examples/README.md)。
 
 ## 📚 API 文档
 
 详细的 API 文档请参考：[API 参考文档](docs/API-Reference.md)
+
+文档包含：
+- 完整的 API 函数说明
+- 参数和返回值详解
+- 使用示例和注意事项
+- 版本兼容性说明
 
 ## 🧪 测试
 
@@ -253,7 +260,7 @@ ctest --output-on-failure
 
 ### 测试文档
 
-- **测试指南**: [测试文档](docs/TESTING.md) - 详细的测试框架安装、编写和运行指南
+- **测试指南**: [测试文档](docs/TESTING.md)（待创建） - 详细的测试框架安装、编写和运行指南
 - **测试说明**: [测试目录 README](tests/README.md) - 测试结构和快速参考
 
 测试文档包含：
@@ -296,14 +303,13 @@ ctest --output-on-failure
 SDK 支持以下通信协议：
 
 - **CAN** (`COMM_CAN_0`, `COMM_CAN_1`) - CAN 总线通信
-- **Modbus** (`COMM_MODBUS`) - Modbus 协议
-- **EtherCAT** (`COMM_ETHERCAT`) - EtherCAT 实时以太网
+
 
 默认使用 `COMM_CAN_0`。
 
 ```cpp
-// 使用 Modbus 通信
-LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
+// 使用 COMM_CAN_1 通信
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_1);
 ```
 
 ## 📁 项目结构
@@ -321,7 +327,9 @@ linkerhand-cpp-sdk/
 │   ├── toolset_example.cpp
 │   └── action_group_show_l10.cpp
 ├── docs/                # 文档
-│   └── API-Reference.md
+│   ├── API-Reference.md    # API 参考文档
+│   ├── TROUBLESHOOTING.md   # 故障排查指南
+│   └── FAQ.md               # 常见问题解答
 ├── src/                 # 源代码
 ├── third_party/         # 第三方依赖
 ├── CMakeLists.txt       # CMake 配置
@@ -378,6 +386,40 @@ cd build
 
 ### L21/L25
 详细映射请参考 [API 文档](docs/API-Reference.md)。
+
+## 🔧 故障排查
+
+如果遇到问题，请参考以下文档：
+
+- **[故障排查指南](docs/TROUBLESHOOTING.md)** - 常见问题的排查和解决方案
+  - 编译问题
+  - 运行时问题
+  - 通信问题
+  - API 使用问题
+  - 性能问题
+
+- **[常见问题解答](docs/FAQ.md)** - 常见问题的快速解答
+  - 安装相关问题
+  - 使用相关问题
+  - API 相关问题
+  - 兼容性问题
+  - 性能相关问题
+
+如果文档无法解决您的问题，请：
+1. 查看 [GitHub Issues](https://github.com/linker-bot/linkerhand-cpp-sdk/issues) 查看是否有类似问题
+2. 提交新的 Issue，并提供详细的错误信息和复现步骤
+3. 联系技术支持：[https://linkerbot.cn/aboutUs](https://linkerbot.cn/aboutUs)
+
+## ❓ 常见问题
+
+快速查找常见问题的答案，请参考 [常见问题解答 (FAQ)](docs/FAQ.md)。
+
+常见问题包括：
+- 如何安装和配置 SDK？
+- 如何选择通信接口？
+- 不同型号的关节数量是多少？
+- 如何提高性能？
+- 如何获取技术支持？
 
 ## 🤝 贡献
 
