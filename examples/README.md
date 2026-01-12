@@ -79,7 +79,7 @@ g++ -std=c++11 examples/toolset_example.cpp -I./include \
 1. 运行程序
 2. 选择机械手型号（L6/O6、L7、L10、L20、L21、L25）
 3. 选择手部方向（左手/右手）
-4. 选择通信接口（CAN0、CAN1、EtherCAT）
+4. 选择通信接口（CAN0、CAN1、ModBus、EtherCAT）
 5. 进入交互菜单，选择要测试的功能
 
 **代码结构**:
@@ -170,6 +170,7 @@ $ ./action_group_show_l10
 - 本示例仅支持 L10 型号
 - 默认使用右手，如需左手请修改代码中的 `HAND_TYPE::RIGHT` 为 `HAND_TYPE::LEFT`
 - 确保设备已正确连接
+- 确保通信接口已正确配置（CAN 总线、ModBus 或 EtherCAT）
 
 ---
 

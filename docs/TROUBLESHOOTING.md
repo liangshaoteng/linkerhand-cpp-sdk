@@ -194,9 +194,13 @@ CMake 3.5 or higher is required
    // 尝试不同的通信接口
    LinkerHandApi hand1(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_0);
    LinkerHandApi hand2(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_1);
+   LinkerHandApi hand3(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
+   LinkerHandApi hand4(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_ETHERCAT);
    ```
 
-3. 检查 CAN 总线状态：
+3. 检查通信接口状态：
+   
+   **CAN 总线**:
    ```bash
    # 查看 CAN 接口
    ip link show can0
@@ -207,6 +211,14 @@ CMake 3.5 or higher is required
    # 监听 CAN 消息
    candump can0
    ```
+   
+   **ModBus**:
+   - 检查串口设备或网络连接
+   - 验证 ModBus 配置参数
+   
+   **EtherCAT**:
+   - 使用 EtherCAT 主站工具检查网络状态
+   - 验证从站配置和连接
 
 4. 检查设备 ID 和地址设置
 
@@ -265,7 +277,23 @@ CMake 3.5 or higher is required
 
 ## 通信问题
 
-### 问题：CAN 总线通信失败
+### 问题：通信接口连接失败
+
+**错误现象**:
+- 设备无响应
+- 数据读取失败
+- 通信超时
+
+**可能原因**:
+- 通信接口未正确配置
+- 设备未连接或未上电
+- 通信协议不匹配
+- 权限问题
+
+**解决方案**:
+根据使用的通信协议，参考以下配置：
+
+### CAN 总线通信问题
 
 **错误现象**:
 - 设备无响应
@@ -301,6 +329,58 @@ CMake 3.5 or higher is required
    - CAN 总线两端需要 120Ω 终端电阻
    - 检查硬件连接
 
+### ModBus 通信问题
+
+**错误现象**:
+- ModBus 连接失败
+- 数据读取超时
+- 串口权限错误
+
+**解决方案**:
+1. **检查串口权限**:
+   ```bash
+   # 添加用户到 dialout 组
+   sudo usermod -a -G dialout $USER
+   # 重新登录后生效
+   
+   # 检查串口设备
+   ls -l /dev/ttyUSB*  # USB 转串口
+   ls -l /dev/ttyS*    # 串口
+   ```
+
+2. **检查串口配置**:
+   - 确认串口设备路径正确
+   - 检查波特率、数据位、停止位、校验位设置
+   - 验证 ModBus 从站地址
+
+3. **测试 ModBus 通信**:
+   - 使用 ModBus 测试工具验证连接
+   - 检查网络连接（ModBus TCP/IP）
+
+### EtherCAT 通信问题
+
+**错误现象**:
+- EtherCAT 主站无法识别从站
+- 网络拓扑错误
+- 同步失败
+
+**解决方案**:
+1. **检查 EtherCAT 主站配置**:
+   - 确保 EtherCAT 主站软件已正确安装
+   - 验证主站配置与硬件匹配
+
+2. **检查网络拓扑**:
+   - 验证 EtherCAT 从站设备已正确连接
+   - 检查网络线缆和连接器
+   - 确认网络拓扑正确（环形或线性）
+
+3. **检查从站状态**:
+   - 使用 EtherCAT 主站工具检查从站状态
+   - 验证从站配置和地址
+
+4. **检查同步**:
+   - 确保 EtherCAT 网络同步正常
+   - 检查分布式时钟（DC）配置（如适用）
 
 ---
 

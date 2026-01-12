@@ -42,7 +42,7 @@ LinkerHand-CPP-SDK 是由灵心巧手（北京）科技有限公司开发的官�
 - **操作系统**: Linux (Ubuntu 18.04+ 推荐)
 - **架构**: x86_64 或 aarch64
 - **编译器**: GCC 7.0+ 或 Clang 5.0+
-- **CMake**: 3.11+
+- **CMake**: 3.15+
 - **依赖**: pthread
 
 ## 🚀 快速开始
@@ -98,8 +98,8 @@ int main() {
 创建 `CMakeLists.txt`:
 
 ```cmake
-cmake_minimum_required(VERSION 3.5)
-project(MyProject)
+cmake_minimum_required(VERSION 3.15)
+project(LinkerHand-CPP-SDK)
 
 # 检测系统架构
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
@@ -305,13 +305,23 @@ ctest --output-on-failure
 SDK 支持以下通信协议：
 
 - **CAN** (`COMM_CAN_0`, `COMM_CAN_1`) - CAN 总线通信
-
+- **ModBus** (`COMM_MODBUS`) - ModBus 通信协议
+- **EtherCAT** (`COMM_ETHERCAT`) - EtherCAT 工业以太网通信
 
 默认使用 `COMM_CAN_0`。
 
 ```cpp
-// 使用 COMM_CAN_1 通信
+// 使用 CAN0 通信（默认）
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
+
+// 使用 CAN1 通信
 LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_1);
+
+// 使用 ModBus 通信
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
+
+// 使用 EtherCAT 通信
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_ETHERCAT);
 ```
 
 ## 📁 项目结构

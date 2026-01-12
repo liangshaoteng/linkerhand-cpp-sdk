@@ -139,6 +139,8 @@ sudo rm -rf /usr/local/lib/linkerhand-cpp-sdk
 **A**: 根据您的硬件配置选择：
 
 - **CAN 总线**: 默认使用 `COMM_CAN_0`，如果有多个 CAN 接口可使用 `COMM_CAN_1`
+- **ModBus**: 使用 `COMM_MODBUS` 进行 ModBus 通信
+- **EtherCAT**: 使用 `COMM_ETHERCAT` 进行 EtherCAT 工业以太网通信
 
 ```cpp
 // CAN0（默认）
@@ -147,13 +149,22 @@ LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT);
 // CAN1
 LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_CAN_1);
 
+// ModBus
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_MODBUS);
+
+// EtherCAT
+LinkerHandApi hand(LINKER_HAND::L10, HAND_TYPE::RIGHT, COMM_ETHERCAT);
 ```
 
 ---
 
-### Q7: 如何配置 CAN 总线？
+### Q7: 如何配置通信接口？
 
-**A**: 在 Linux 系统中配置 CAN 总线：
+**A**: 根据不同的通信协议进行配置：
+
+#### CAN 总线配置
+
+在 Linux 系统中配置 CAN 总线：
 
 ```bash
 # 加载 CAN 模块
@@ -172,6 +183,21 @@ ip link show can0
 cansend can0 123#DEADBEEF
 candump can0
 ```
+
+#### ModBus 配置
+
+ModBus 配置取决于使用的接口类型（串口或网络）：
+
+- **串口 ModBus**: 确保串口设备权限正确，通常需要将用户添加到 `dialout` 组
+- **网络 ModBus**: 确保网络连接正常，ModBus TCP/IP 端口已开放
+
+#### EtherCAT 配置
+
+EtherCAT 需要配置 EtherCAT 主站：
+
+- 确保 EtherCAT 主站软件已安装和配置
+- 检查 EtherCAT 网络拓扑
+- 验证 EtherCAT 从站设备已正确连接
 
 ---
 
