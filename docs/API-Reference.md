@@ -17,7 +17,7 @@
 
 ## API 概述
 
-LinkerHand C++ API 提供了完整的接口用于控制灵心巧手系列灵巧手设备。支持 O6、L6、L7、L10、L20、L21、L25 等多种型号，支持 CAN通信协议。
+LinkerHand C++ API 提供了完整的接口用于控制灵心巧手系列灵巧手设备。支持 O6、L6、L7、L10、L20、L21、L25 等多种型号，支持 CAN、ModBus、EtherCAT 等多种通信协议。
 
 ---
 
@@ -70,6 +70,8 @@ LinkerHandApi(const LINKER_HAND &handJoint, const HAND_TYPE &handType, const COM
 - `commType` (COMM_TYPE): 通信类型（可选，默认 `COMM_CAN_0`）
   - `COMM_CAN_0` - CAN 总线 0
   - `COMM_CAN_1` - CAN 总线 1
+  - `COMM_MODBUS` - ModBus 通信协议
+  - `COMM_ETHERCAT` - EtherCAT 工业以太网通信
 
 **返回值**
 无
@@ -91,8 +93,11 @@ int main() {
 
 **注意事项**
 - 构造函数会自动初始化通信接口
-- 确保在创建实例前，通信接口已正确配置（如 CAN 总线已启动）
+- 确保在创建实例前，通信接口已正确配置（如 CAN 总线已启动、ModBus 端口已配置、EtherCAT 网络已初始化）
 - 不同型号支持的通信协议可能不同，请参考设备手册
+- 使用 CAN 总线前，确保总线已正确配置和启动
+- 使用 ModBus 前，确保串口或网络连接已建立
+- 使用 EtherCAT 前，确保 EtherCAT 主站已正确配置
 
 ---
 
@@ -839,6 +844,8 @@ int main() {
 4. **通信协议**
    - 默认使用 CAN0，可通过构造函数参数修改
    - 使用 CAN 总线前，确保总线已正确配置和启动
+   - 使用 ModBus 前，确保串口或网络连接已建立
+   - 使用 EtherCAT 前，确保 EtherCAT 主站已正确配置
 
 5. **错误处理**
    - 建议定期检查故障码
@@ -875,6 +882,8 @@ int main() {
 
 ### 通信协议支持
 - ✅ CAN (CAN0, CAN1)
+- ✅ ModBus
+- ✅ EtherCAT
 
 ---
 

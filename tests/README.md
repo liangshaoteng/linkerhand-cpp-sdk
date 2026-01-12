@@ -43,9 +43,10 @@ make
 ```
 
 **说明**:
-- `-DBUILD_TESTING=ON` 启用测试构建
+- `-DBUILD_TESTING=ON` 启用测试构建（默认已启用）
 - CMake 会自动下载 Google Test 框架（如果未安装）
 - 确保网络连接正常，以便下载依赖
+- **注意**: 项目要求 CMake 3.15 或更高版本
 
 ### 方法二：禁用测试
 
@@ -475,7 +476,7 @@ Could not find gtest
    # Ubuntu/Debian
    sudo apt-get install libgtest-dev
    ```
-3. 检查 CMake 版本（需要 3.5+）
+3. 检查 CMake 版本（需要 3.15+）
 
 ---
 
@@ -581,7 +582,7 @@ CMake Error: ...
 
 2. **检查 CMake 版本**:
    ```bash
-   cmake --version  # 需要 3.5+
+   cmake --version  # 需要 3.15+
    ```
 
 3. **检查 CMakeLists.txt 语法**:

@@ -220,7 +220,7 @@ sudo apt-get install -y \
 mkdir -p build
 cd build
 
-# 配置 CMake（启用测试）
+# 配置 CMake（启用测试，CMake 最低版本要求 3.15）
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
 
 # 构建项目
@@ -245,7 +245,7 @@ sudo apt-get install -y \
 mkdir -p build
 cd build
 
-# 配置 CMake（交叉编译）
+# 配置 CMake（交叉编译，CMake 最低版本要求 3.15）
 cmake .. \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=ON \
@@ -312,3 +312,5 @@ cmake /path/to/project -Wno-dev
 ---
 
 **最后更新**: 2026-01-XX
+
+**注意**: 本文档描述了项目的 CI/CD 配置。如果您的项目尚未配置 CI/CD，可以参考本文档进行配置。实际的工作流配置文件位于 `.github/workflows/ci.yml`。
